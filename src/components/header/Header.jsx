@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useContext, useState } from "react";
 import { faBed, faPerson } from "@fortawesome/free-solid-svg-icons";
 import { faPlane } from "@fortawesome/free-solid-svg-icons";
 import { faTaxi } from "@fortawesome/free-solid-svg-icons";
@@ -11,15 +11,19 @@ import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { format } from "date-fns";
 import { useHistory } from "react-router-dom";
+import {SearchContext} from "../../context/SearchContext"
+import {AuthContext} from "../../context/AuthContext"
+
+
 
 const Header = ({ type }) => {
+  const { user } = useContext(AuthContext);
+
   const history = useHistory();
 
   const [destination, setDestination] = useState("");
-
   const [openDate, setOpenDate] = useState(false);
-
-  const [date, setDate] = useState([
+  const [dates, setDates] = useState([
     {
       startDate: new Date(),
       endDate: new Date(),
@@ -43,8 +47,11 @@ const Header = ({ type }) => {
     });
   };
 
-  const handleSearch = () => {
-    history.push("/hotels",{state : {destination,date,options}});
+
+  const {dispatch } = useContext(SearchContext)
+const handleSearch = () => {
+  dispatch({type :"NEW_SEARCH" , payload :{destination,dates,options}})
+    history.push("/hotels", { state: { destination, dates, options } });
   };
 
   return (
@@ -80,7 +87,7 @@ const Header = ({ type }) => {
                 Get reward for your travel- unlock instant saving of 10% or
                 more.
               </p>
-              <button className="headerBtn"> Login / Signup</button>
+              {!user && <button className="headerBtn"> Login / Signup</button>}
               {/* Header Search start */}
               <div className="headerSearch">
                 {/* Header Search box 1 */}
@@ -90,7 +97,7 @@ const Header = ({ type }) => {
                     type="text"
                     placeholder="Where are you going?"
                     className="headerSearchInput"
-                    onChange={e=>setDestination(e.target.value)}
+                    onChange={(e) => setDestination(e.target.value)}
                   />
                 </div>
                 {/* Header Search box 1 */}
@@ -102,16 +109,16 @@ const Header = ({ type }) => {
                   <span
                     onClick={() => setOpenDate(!openDate)}
                     className="headerSearchText"
-                  >{`${format(date[0].startDate, "MM/dd/yyyy")}  to ${format(
-                    date[0].endDate,
+                  >{`${format(dates[0].startDate, "MM/dd/yyyy")}  to ${format(
+                    dates[0].endDate,
                     "MM/dd/yyyy"
                   )}`}</span>
                   {openDate && (
                     <DateRange
                       editableDateInputs={true}
-                      onChange={(item) => setDate([item.selection])}
+                      onChange={(item) => setDates([item.selection])}
                       moveRangeOnFirstSelection={false}
-                      ranges={date}
+                      ranges={dates}
                       className="date"
                       minDate={new Date()}
                     />
@@ -206,7 +213,7 @@ const Header = ({ type }) => {
                   </button>
                 </div>
                 {/* /////////////////// */}
-              </div>{" "}
+              </div>
             </>
           )}
           {/* Header Search start */}

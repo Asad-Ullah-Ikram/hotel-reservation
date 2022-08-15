@@ -8,6 +8,7 @@ import {
 import Home from "../src/pages/home/Home"
 import List from "../src/pages/list/List"
 import Hotel from "../src/pages/hotel/Hotel"
+import Login from './pages/Auth/Login/Login';
 
 
 const App = () => {
@@ -17,6 +18,7 @@ const App = () => {
        <Route exact path="/" component={Home}/>
        <Route exact path="/hotels" component={List}/>
        <Route path="/hotels/:id" component={Hotel}/>
+       <Route path="/login" component={Login}/>
        </Switch>
     </Router></div>
   )
